@@ -1,11 +1,16 @@
-use crate::util::{get_pluggy_dir, git_clone, run_git};
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
+use crate::{
+    git::{git_clone, run_git},
+    util::get_pluggy_dir,
+};
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
     pub git_command: String,
+    pub dotnet_command: String,
     pub dp17_upstream: Option<String>,
     pub dp17_fork: Option<String>,
     pub sign_commits: bool,
@@ -16,6 +21,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             git_command: "git".to_string(),
+            dotnet_command: "dotnet".to_string(),
             dp17_upstream: None,
             dp17_fork: None,
             sign_commits: false,

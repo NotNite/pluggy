@@ -20,58 +20,58 @@ pub enum RepoCommand {
     #[clap(verbatim_doc_comment)]
     Init,
 
-    /// Adds a plugin to the repository.
+    /// Adds or updates a plugin to the repository.
     /// When used for the official repository, a manifest file is generated in a new branch.
     /// When used for a custom repository, adds the plugin to the manifest file.
     #[clap(verbatim_doc_comment)]
     Add {
+        /// The internal name of the plugin.
+        #[clap(verbatim_doc_comment)]
+        name: String,
+
         /// A Git remote.
         #[clap(verbatim_doc_comment)]
-        url: String,
+        remote: String,
+
+        /// The path to the project in the remote.
+        /// Defaults to the internal name.
+        #[clap(short, long, verbatim_doc_comment)]
+        path: Option<String>,
 
         /// The branch to use, defaulting to the default branch of the remote.
+        /// Has no effect when commit is specified.
         #[clap(short, long, verbatim_doc_comment)]
         branch: Option<String>,
+
+        /// The commit to use, defaulting to the latest commit on the specified branch.
+        #[clap(short, long, verbatim_doc_comment)]
+        commit: Option<String>,
 
         /// Whether to save the plugin in plugin testing.
         /// Defaults to true on the official repository, and false on custom repositories.
         #[clap(short, long, verbatim_doc_comment)]
-        testing: Option<bool>,
+        testing: bool,
 
-        /// What authors can control the plugin, separated by commas.
+        /// What track to use.
+        /// Only applies to the official repository.
+        /// Defaults to 'stable' or 'testing/live' depending on the testing flag.
+        #[clap(long, verbatim_doc_comment)]
+        track: Option<String>,
+
+        /// What owners can control the plugin, separated by commas.
         /// Must be specified on the official repository.
         /// This has no effect on custom repositories.
         #[clap(short, long, verbatim_doc_comment)]
-        authors: Option<Vec<String>>,
-    },
-
-    /// Updates a plugin in the repository.
-    #[clap(verbatim_doc_comment)]
-    Update {
-        /// The internal name of the plugin to update.
-        #[clap(verbatim_doc_comment)]
-        name: String,
-
-        /// What commit to update to.
-        /// Defaults to the latest commit of the specified branch.
-        #[clap(short, long, verbatim_doc_comment)]
-        commit: Option<String>,
-
-        /// What branch to pull the latest commit from.
-        /// Unused if commit is specified.
-        /// Defaults to the default branch of the remote.
-        #[clap(short, long, verbatim_doc_comment)]
-        branch: Option<String>,
-
-        /// Whether to mark this update as testing-exclusive.
-        /// This has no effect on custom repositories.
-        #[clap(short, long, verbatim_doc_comment)]
-        testing: bool,
+        owners: Option<Vec<String>>,
     },
 
     /// Pushes changes made to the repository.
     /// When used on the official repository, all staged changes are pushed to their respective branches.
     /// When used on a custom repository, the configured push target is executed.
     #[clap(verbatim_doc_comment)]
-    Push,
+    Push {
+        /// The plugin to push changes for.
+        /// Only applies to the official repository.
+        name: Option<String>,
+    },
 }

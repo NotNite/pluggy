@@ -1,6 +1,8 @@
 use anyhow::Context;
 use std::path::{Path, PathBuf};
 
+use crate::config::{get_pluggy_config, Config};
+
 fn get_default_pluggy_dir() -> anyhow::Result<PathBuf> {
     let home = home::home_dir().context("Failed to find home directory")?;
     let pluggy = home.join(".pluggy");
@@ -19,37 +21,65 @@ pub fn get_pluggy_dir() -> anyhow::Result<PathBuf> {
     Ok(pluggy)
 }
 
-pub fn run_git(dir: &Path, args: &[&str]) -> anyhow::Result<()> {
-    let git_cmd = std::env::var("PLUGGY_GIT_CMD").unwrap_or_else(|_| "git".to_string());
-    let status = std::process::Command::new(git_cmd)
+pub fn calc_track(testing: bool, track: Option<String>) -> String {
+    if let Some(track) = track {
+        track
+    } else if testing {
+        "testing/live".to_string()
+    } else {
+        "stable".to_string()
+    }
+}
+
+pub fn guarantee_temp() -> anyhow::Result<PathBuf> {
+    let temp = get_pluggy_dir()?.join("temp");
+    if temp.exists() {
+        std::fs::remove_dir_all(&temp).context("Failed to remove temp directory")?;
+    }
+    std::fs::create_dir(&temp).context("Failed to create temp directory")?;
+    Ok(temp)
+}
+
+pub fn build(dir: &Path, path: &str) -> anyhow::Result<PathBuf> {
+    let config = get_pluggy_config()?;
+    let temp = guarantee_temp()?;
+    let temp_str = temp.to_str().unwrap();
+
+    let arg = std::process::Command::new(config.dotnet_command)
         .current_dir(dir)
         .stdin(std::process::Stdio::inherit())
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
-        .args(args)
-        .status()
-        .context("Failed to run git")?;
+        .args(["build", path, "-c", "Release", "-o", temp_str])
+        .status()?;
 
-    if !status.success() {
-        anyhow::bail!("git failed with status {}", status);
+    if !arg.success() {
+        anyhow::bail!("Failed to build project");
     }
 
-    Ok(())
+    Ok(temp)
 }
 
-pub fn git_clone(url: &str, path: &Path, dir: &Path) -> anyhow::Result<()> {
-    for i in 0..5 {
-        let result = run_git(dir, &["clone", url, path.to_str().unwrap()]);
-        if result.is_ok() {
-            break;
-        } else {
-            if i == 4 {
-                result?;
-            }
+pub fn check_config_fulfilled() -> anyhow::Result<Config> {
+    let config = get_pluggy_config()?;
+    if config.default_author.is_none() {
+        anyhow::bail!("Configuration not generated")
+    } else {
+        Ok(config)
+    }
+}
 
-            println!("Failed to clone, retrying...");
-        }
+pub fn write_manifest(
+    dir: &Path,
+    manifest: &crate::types::D17Manifest,
+    icon_url: Option<String>,
+) -> anyhow::Result<()> {
+    if !dir.exists() {
+        std::fs::create_dir_all(dir)?;
     }
 
+    let manifest_str = toml::to_string(manifest)?;
+    std::fs::write(dir.join("manifest.toml"), manifest_str)?;
+    // TODO icon url
     Ok(())
 }
