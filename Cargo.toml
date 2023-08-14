@@ -1,0 +1,15 @@
+[package]
+name = "pluggy"
+description = "Dalamud repository management tool"
+authors = ["NotNite <hi@notnite.com>"]
+license = "MIT"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.72"
+clap = { version = "4.3.21", features = ["derive"] }
+home = "0.5.5"
+inquire = "0.6.2"
+serde = { version = "1.0.183", features = ["derive"] }
+toml = "0.7.6"
