@@ -10,3 +10,12 @@ Dalamud repository management tool. It lets you automatically update [the offici
 ### Managing the official repository
 
 First, create a config file by running `pluggy official init`. You'll answer a few questions about your Git config, and it'll clone the DalamudPluginsD17 repository for you.
+
+Then, add/update the plugin by specifying its InternalName and Git repository, and then push to your fork:
+
+```shell
+pluggy official add DistantSeas "https://github.com/NotNite/DistantSeas.git"
+pluggy official push DistantSeas
+```
+
+Then make a PR, and you're done!
