@@ -1,12 +1,14 @@
 use anyhow::Context;
+use directories::ProjectDirs;
 use std::path::{Path, PathBuf};
 
 use crate::config::{get_pluggy_config, Config};
 
 fn get_default_pluggy_dir() -> anyhow::Result<PathBuf> {
-    let home = home::home_dir().context("Failed to find home directory")?;
-    let pluggy = home.join(".pluggy");
-    Ok(pluggy)
+    Ok(ProjectDirs::from("com", "notnite", "pluggy")
+        .context("Failed to setup project directory")?
+        .config_dir()
+        .to_path_buf())
 }
 
 pub fn get_pluggy_dir() -> anyhow::Result<PathBuf> {
@@ -72,7 +74,7 @@ pub fn check_config_fulfilled() -> anyhow::Result<Config> {
 pub fn write_manifest(
     dir: &Path,
     manifest: &crate::types::D17Manifest,
-    icon_url: Option<String>,
+    _icon_url: Option<String>,
 ) -> anyhow::Result<()> {
     if !dir.exists() {
         std::fs::create_dir_all(dir)?;
