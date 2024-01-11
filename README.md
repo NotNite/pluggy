@@ -5,7 +5,7 @@ Dalamud repository management tool. It lets you automatically update [the offici
 ## Usage
 
 > [!NOTE]
-> By default, pluggy will operate in `~/.pluggy`. You can change this with the `PLUGGY_HOME` environment variable.
+> By default, pluggy will operate in your operating system's default configuration directory. You can change this with the `PLUGGY_HOME` environment variable.
 
 ### Managing the official repository
 
