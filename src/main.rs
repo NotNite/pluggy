@@ -4,8 +4,6 @@ use cmd::{Args, RepoCommand};
 use sha2::Digest;
 use util::get_pluggy_dir;
 
-use crate::config::get_pluggy_config;
-
 mod cmd;
 mod config;
 mod git;
@@ -115,6 +113,6 @@ fn handle_official(cmd: RepoCommand) -> anyhow::Result<()> {
     }
 }
 
-fn handle_custom(cmd: RepoCommand) -> anyhow::Result<()> {
+fn handle_custom(_cmd: RepoCommand) -> anyhow::Result<()> {
     todo!()
 }
