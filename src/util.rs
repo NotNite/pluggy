@@ -17,7 +17,7 @@ pub fn get_pluggy_dir() -> anyhow::Result<PathBuf> {
         .unwrap_or(get_default_pluggy_dir().context("Failed to find pluggy directory")?);
 
     if !pluggy.exists() {
-        std::fs::create_dir(&pluggy).context("Failed to create pluggy directory")?;
+        std::fs::create_dir_all(&pluggy).context("Failed to create pluggy directory")?;
     }
 
     Ok(pluggy)
