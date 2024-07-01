@@ -70,11 +70,15 @@ pub fn calc_branch(dir: &Path, branch: Option<String>) -> anyhow::Result<String>
     Ok(branch)
 }
 
-pub fn switch_branch(dir: &Path, branch: &str) -> anyhow::Result<()> {
+pub fn switch_branch(dir: &Path, branch: &str, reset: bool) -> anyhow::Result<()> {
     println!("Switching to branch {}...", branch);
     run_git(dir, &["stash"])?;
     run_git(dir, &["fetch", "--all"])?;
     run_git(dir, &["checkout", branch])?;
+
+    if reset {
+        run_git(dir, &["reset", "--hard", &format!("origin/{}", branch)])?;
+    }
 
     Ok(())
 }
@@ -133,7 +137,7 @@ pub fn list_branches(dir: &Path) -> anyhow::Result<Vec<String>> {
 
 pub fn push(dir: &Path, remote: &str, branch: &str) -> anyhow::Result<()> {
     println!("Pushing to {}...", remote);
-    switch_branch(dir, branch)?;
+    switch_branch(dir, branch, false)?;
     run_git(dir, &["push", remote, branch])?;
     Ok(())
 }

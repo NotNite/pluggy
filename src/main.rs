@@ -47,7 +47,7 @@ fn handle_official(cmd: RepoCommand) -> anyhow::Result<()> {
             let dir = git::ensure_clone(&hash, &remote)?;
 
             let branch = git::calc_branch(&dir, branch)?;
-            git::switch_branch(&dir, &branch)?;
+            git::switch_branch(&dir, &branch, true)?;
 
             let commit = if let Some(commit) = commit {
                 commit
@@ -86,7 +86,7 @@ fn handle_official(cmd: RepoCommand) -> anyhow::Result<()> {
             };
 
             let dp17 = get_pluggy_dir()?.join("dp17_upstream");
-            git::switch_branch(&dp17, "main")?;
+            git::switch_branch(&dp17, "main", false)?;
 
             git::create_branch(&dp17, &branch_name)?;
             let track_dir = dp17.join(track).join(name);
