@@ -87,6 +87,7 @@ fn handle_official(cmd: RepoCommand) -> anyhow::Result<()> {
 
             let dp17 = get_pluggy_dir()?.join("dp17_upstream");
             git::switch_branch(&dp17, "main", false)?;
+            git::pull(&dp17)?;
 
             git::create_branch(&dp17, &branch_name)?;
             let track_dir = dp17.join(track).join(name);

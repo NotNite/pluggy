@@ -141,3 +141,8 @@ pub fn push(dir: &Path, remote: &str, branch: &str) -> anyhow::Result<()> {
     run_git(dir, &["push", remote, branch])?;
     Ok(())
 }
+
+pub fn pull(dir: &Path) -> anyhow::Result<()> {
+    run_git(dir, &["pull"])?;
+    Ok(())
+}
