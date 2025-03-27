@@ -29,7 +29,7 @@ fn handle_official(cmd: RepoCommand) -> anyhow::Result<()> {
             Ok(())
         }
 
-        RepoCommand::Add {
+        RepoCommand::Update {
             name,
             remote,
             path,

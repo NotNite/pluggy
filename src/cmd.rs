@@ -24,7 +24,7 @@ pub enum RepoCommand {
     /// When used for the official repository, a manifest file is generated in a new branch.
     /// When used for a custom repository, adds the plugin to the manifest file.
     #[clap(verbatim_doc_comment)]
-    Add {
+    Update {
         /// The internal name of the plugin.
         #[clap(verbatim_doc_comment)]
         name: String,
